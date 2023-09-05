@@ -90,3 +90,53 @@ const PATH = {
 // アップキャスト
 // 型の抽象度を上げる役割
 // as anyやas unknownなど
+
+// indexシグネチャ
+// 型の安全性が欠けるので、多用はしない方がいい
+type User = {
+  name: string;
+  // この型だったらいくらでも追加できる
+  [key: string]: string;
+};
+
+const user: User = {
+  name: "ggg",
+  age: "2",
+};
+
+// Mapped Types
+// 注意点はオブジェクト内に直接書くとエラーが出る(下記)
+// &を使用して合体させなければならない
+type Owner = {
+  name: string;
+  // [K in "height" | "weight"]: number;
+} & PersonalData;
+
+const huga = {
+  height: 200,
+  weight: 300,
+};
+
+type PersonalData = {
+  // height: number;
+  // weight: number;
+
+  // 上記と同じ意味
+  // K(key)やP(property)を使用するのが慣習
+  [K in "height" | "weight"]: number;
+
+  // 変数から型を作ることもできる
+  // 一括でオプショナルを指定できる(個別指定はできない)
+  // [K in keyof typeof huga]?: number | string;
+};
+
+type OptionalPersonalData = {
+  // PersonalData[K]と書くとnumberの部分が取り出せる
+  [K in keyof PersonalData]?: PersonalData[K];
+};
+
+const owner: Owner = {
+  name: "a",
+  height: 1,
+  weight: 3,
+};
